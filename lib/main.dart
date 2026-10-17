@@ -108,9 +108,9 @@ class _MonitorPageState extends State<MonitorPage>
   Future<void> _initTts() async {
     String lang = 'uz-UZ';
     try {
-      final uz = await _tts.isLanguageAvailable('uz-UZ');
+      final dynamic uz = await _tts.isLanguageAvailable('uz-UZ');
       if (!(uz == true || uz == 1)) {
-        final tr = await _tts.isLanguageAvailable('tr-TR');
+        final dynamic tr = await _tts.isLanguageAvailable('tr-TR');
         lang = (tr == true || tr == 1) ? 'tr-TR' : 'en-US';
       }
     } catch (_) {
@@ -200,11 +200,12 @@ class _MonitorPageState extends State<MonitorPage>
     final cam = _camera;
     if (cam == null) return null;
 
-    final rotation = InputImageRotationValue.fromRawValue(cam.sensorOrientation);
+    final rotation =
+        InputImageRotationValue.fromRawValue(cam.sensorOrientation);
     if (rotation == null) return null;
 
-    final format = InputImageFormatValue.fromRawValue(image.format.raw);
-    if (format != InputImageFormat.nv21 || image.planes.length != 1) {
+    final rawFormat = InputImageFormatValue.fromRawValue(image.format.raw);
+    if (rawFormat != InputImageFormat.nv21 || image.planes.length != 1) {
       return null;
     }
 
@@ -214,7 +215,7 @@ class _MonitorPageState extends State<MonitorPage>
       metadata: InputImageMetadata(
         size: Size(image.width.toDouble(), image.height.toDouble()),
         rotation: rotation,
-        format: format,
+        format: InputImageFormat.nv21,
         bytesPerRow: plane.bytesPerRow,
       ),
     );
@@ -348,10 +349,10 @@ class _MonitorPageState extends State<MonitorPage>
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setSheet) {
-            double l = _roi.left;
-            double t = _roi.top;
-            double w = _roi.width;
-            double h = _roi.height;
+            final double l = _roi.left;
+            final double t = _roi.top;
+            final double w = _roi.width;
+            final double h = _roi.height;
 
             void apply(double nl, double nt, double nw, double nh) {
               nl = nl.clamp(0.0, 0.85);
@@ -578,7 +579,7 @@ class _OverlayPainter extends CustomPainter {
     );
 
     final fill = Paint()
-      ..color = (inside ? Colors.green : Colors.blue).withOpacity(0.15)
+      ..color = (inside ? Colors.green : Colors.blue).withAlpha(40)
       ..style = PaintingStyle.fill;
     final border = Paint()
       ..color = inside ? Colors.greenAccent : Colors.lightBlueAccent
@@ -588,11 +589,12 @@ class _OverlayPainter extends CustomPainter {
     canvas.drawRect(rect, fill);
     canvas.drawRect(rect, border);
 
-    if (center != null) {
+    final c = center;
+    if (c != null) {
       final dot = Paint()
         ..color = inside ? Colors.greenAccent : Colors.orangeAccent;
       canvas.drawCircle(
-        Offset(center!.dx * size.width, center!.dy * size.height),
+        Offset(c.dx * size.width, c.dy * size.height),
         math.max(8, size.width * 0.02),
         dot,
       );
