@@ -22,7 +22,7 @@ jobs:
           sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' android/app/build.gradle*
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/' android/app/build.gradle*
       - run: flutter pub get
-      - run: flutter build apk --release
+      - run: flutter build apk --release --no-shrink
       - uses: actions/upload-artifact@v4
         with:
           name: mijoz-signal-apk
